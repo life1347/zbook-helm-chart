@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zbook-minio-config
+  labels:
+    app: zbook-minio
+data:
+  MINIO_ROOT_USER: {{ .Values.minio.env.MINIO_ROOT_USER | quote }}
+  MINIO_ROOT_PASSWORD: {{ .Values.minio.env.MINIO_ROOT_PASSWORD | quote }}

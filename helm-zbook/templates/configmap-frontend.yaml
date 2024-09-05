@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zbook-frontend-config
+  labels:
+    app: zbook-frontend
+data:
+  WEBSOCKET_URL: {{ .Values.frontend.env.WEBSOCKET_URL | quote }}
+  BACKEND_URL:   {{ .Values.frontend.env.BACKEND_URL | quote }}
+  AUTH_SECRET: {{ .Values.frontend.env.AUTH_SECRET | quote }}
+  AUTH_TRUST_HOST: {{ .Values.frontend.env.AUTH_TRUST_HOST | quote }}
+  GITHUB_ID: {{ .Values.frontend.env.GITHUB_ID | quote }}
+  GITHUB_SECRET: {{ .Values.frontend.env.GITHUB_SECRET | quote }}
+  GOOGLE_CLIENT_ID: {{ .Values.frontend.env.GOOGLE_CLIENT_ID | quote }}
+  GOOGLE_CLIENT_SECRET: {{ .Values.frontend.env.GOOGLE_CLIENT_SECRET | quote }}
+  AUTH_URL: {{ .Values.frontend.env.AUTH_URL | quote }}
+  DOC_USERNAME: {{ .Values.frontend.env.DOC_USERNAME | quote }}
+  DOC_REPONAME: {{ .Values.frontend.env.DOC_REPONAME | quote }}

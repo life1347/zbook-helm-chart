@@ -1,0 +1,80 @@
+common:
+  gateway: "<YOUR_GATEWAY>"
+  website: "<YOUR_WEBSITE_URL>" # e.g. zizdlp.com
+  MINIO_ROOT_USER: "<YOUR_MINIO_USER>" #e.g. minio_root
+  MINIO_ROOT_PASSWORD: "<YOUR_MINIO_PASSWORD>" #e.g. minio_root_secret
+  POSTGRES_DB: "<YOUR_POSTGRES_DB>" #e.g. zbook
+  POSTGRES_USER: "<YOUR_POSTGRES_USER>" #e.g. root
+  POSTGRES_PASSWORD: "<YOUR_POSTGRES_PASSWORD>" #e.g. root_secret
+backend:
+  image: zizdlp/zbook_backend:latest
+  imagePullPolicy: "Always"  # options "Always", "IfNotPresent", or "Never"
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "1024Mi"
+      cpu: "1024m"
+    limits:
+      memory: "1500Mi"
+      cpu: "1500m"
+  env:
+    DB_SOURCE: "postgresql://{{ .Values.common.POSTGRES_USER }}:{{ .Values.common.POSTGRES_PASSWORD }}@zbook-database-service:5432/{{ .Values.common.POSTGRES_DB }}?sslmode=disable"
+    REQUIRE_EMAIL_VERIFY: "true"
+    REDIS_ADDRESS: zbook-redis-service:6379
+    HOME_ADDRESS: {{ .Values.common.website | quote }}
+    MINIO_ADDR: zbook-minio-api-service:9000
+    MINIO_ROOT_USER: {{ .Values.common.MINIO_ROOT_USER | quote }}
+    MINIO_ROOT_PASSWORD: {{ .Values.common.MINIO_ROOT_PASSWORD | quote }}
+    SMTP_AUTH_ADDR: "<YOURS>"  # e.g. smtp.gmail.com
+    SMTP_SERVER_ADDR: "<YOURS>"  # e.g. smtp.gmail.com:587
+    EMAIL_SENDER_NAME: zbook
+    EMAIL_SENDER_ADDRESS: "<YOURS>"  # e.g. example@example.com
+    EMAIL_SENDER_PASSWORD: "<YOURS>"  # e.g. secret_secret
+    TIME_ZONE: Asia/Shanghai
+
+frontend:
+  image: zizdlp/zbook_frontend:latest
+  imagePullPolicy: "Always"
+  replicaCount: 1
+  env:
+    WEBSOCKET_URL: {{ printf "wss://websocket.%s" .Values.common.website }}
+    BACKEND_URL: http://zbook-backend-api-service:8080
+    AUTH_SECRET: "<YOURS>"  # e.g. secret_secret
+    AUTH_TRUST_HOST: "true"
+    GITHUB_ID: "<YOURS>"  # e.g. asdfasvasdfasdfawefawsef
+    GITHUB_SECRET: "<YOURS>"  # e.g. asdfasvasdfasdfawefawsef
+    GOOGLE_CLIENT_ID: "<YOURS>"  # e.g. asdfasvasdfasdfawefawsef
+    GOOGLE_CLIENT_SECRET: "<YOURS>"  # e.g. asdfasvasdfasdfawefawsef
+    AUTH_URL: {{ printf "https://%s" .Values.common.website }}
+    DOC_USERNAME: "<YOURS>"  # e.g. admin
+    DOC_REPONAME: "<YOURS>"  # e.g. docs
+
+database:
+  image: zizdlp/zbook_database:latest
+  imagePullPolicy: "Always"
+  replicaCount: 1
+  hostPath: "/mnt/zbook/database"
+  resources:
+    requests:
+      storage: "4Gi"
+  env:
+    POSTGRES_DB: {{ .Values.common.POSTGRES_DB | quote }}
+    POSTGRES_USER: {{ .Values.common.POSTGRES_USER | quote }}
+    POSTGRES_PASSWORD:  {{ .Values.common.POSTGRES_PASSWORD | quote }}
+redis:
+  image: redis:7-alpine
+  replicaCount: 1
+  hostPath: "/mnt/zbook/redis"
+  resources:
+    requests:
+      storage: "1Gi"
+minio:
+  image: minio/minio
+  replicaCount: 1
+  hostPath: "/mnt/zbook/minio"
+  resources:
+    requests:
+      storage: "10Gi"
+  env:
+    MINIO_ROOT_USER: {{ .Values.common.MINIO_ROOT_USER | quote }}
+    MINIO_ROOT_PASSWORD: {{ .Values.common.MINIO_ROOT_PASSWORD | quote }}

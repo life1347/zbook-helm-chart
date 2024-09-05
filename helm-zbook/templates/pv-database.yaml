@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zbook-database-pv-volume
+  labels:
+    type: local
+    app: zbook-database
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: {{ .Values.database.resources.requests.storage }}
+  hostPath:
+    path: {{ .Values.database.hostPath | quote }}

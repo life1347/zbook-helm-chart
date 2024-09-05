@@ -1,0 +1,57 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: zbook-frontend-virtual-service
+spec:
+  hosts:
+  - {{ .Values.common.website }}
+  - {{ printf "www.%s" .Values.common.website }}
+  gateways:
+  - {{ .Values.common.gateway }}
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: zbook-frontend-service
+        port:
+          number: 3000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: zbook-websocket-virtual-service
+spec:
+  hosts:
+  - {{ printf "websocket.%s" .Values.common.website }}
+  gateways:
+  - {{ .Values.common.gateway }}
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: zbook-backend-websocket-service
+        port:
+          number: 9099
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: zbook-minio-virtual-service
+spec:
+  hosts:
+  - {{ printf "minio.%s" .Values.common.website }}
+  gateways:
+  - {{ .Values.common.gateway }}
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: zbook-minio-webui-service
+        port:
+          number: 9001

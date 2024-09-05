@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zbook-database
+spec:
+  replicas: {{ .Values.database.replicaCount }}
+  selector:
+    matchLabels:
+      app: zbook-database
+  template:
+    metadata:
+      labels:
+        app:  zbook-database
+    spec:
+      containers:
+      - name: zbook-database
+        image: {{ .Values.database.image }}
+        imagePullPolicy: {{ .Values.database.imagePullPolicy }}
+        ports:
+        - containerPort: 5432
+        envFrom:
+          - configMapRef:
+              name: zbook-database-config
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: database-storage
+      volumes:
+        - name: database-storage
+          persistentVolumeClaim:
+            claimName: zbook-database-pv-claim

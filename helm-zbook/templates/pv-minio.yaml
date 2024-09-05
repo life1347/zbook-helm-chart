@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zbook-minio-pv-volume
+  labels:
+    type: local
+    app: zbook-minio
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: {{ .Values.minio.resources.requests.storage }}
+  hostPath:
+    path: {{ .Values.minio.hostPath | quote }}

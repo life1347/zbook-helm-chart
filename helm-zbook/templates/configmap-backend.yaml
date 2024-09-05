@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zbook-backend-config
+  labels:
+    app: zbook-backend
+data:
+  DB_SOURCE: {{ .Values.backend.env.DB_SOURCE | quote }}
+  REQUIRE_EMAIL_VERIFY: {{ .Values.backend.env.REQUIRE_EMAIL_VERIFY | quote }}
+  REDIS_ADDRESS: {{ .Values.backend.env.REDIS_ADDRESS | quote }}
+  HOME_ADDRESS: {{ .Values.backend.env.HOME_ADDRESS | quote }}
+  MINIO_ADDR: {{ .Values.backend.env.MINIO_ADDR | quote }}
+  MINIO_ROOT_USER: {{ .Values.backend.env.MINIO_ROOT_USER | quote }}
+  MINIO_ROOT_PASSWORD: {{ .Values.backend.env.MINIO_ROOT_PASSWORD | quote }}
+  SMTP_AUTH_ADDR: {{ .Values.backend.env.SMTP_AUTH_ADDR | quote }}
+  SMTP_SERVER_ADDR: {{ .Values.backend.env.SMTP_SERVER_ADDR | quote }}
+  EMAIL_SENDER_NAME: {{ .Values.backend.env.EMAIL_SENDER_NAME | quote }}
+  EMAIL_SENDER_ADDRESS: {{ .Values.backend.env.EMAIL_SENDER_ADDRESS | quote }}
+  EMAIL_SENDER_PASSWORD: {{ .Values.backend.env.EMAIL_SENDER_PASSWORD | quote }}
+  TIME_ZONE: {{ .Values.backend.env.TIME_ZONE | quote }}

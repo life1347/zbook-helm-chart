@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zbook-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: zbook-backend
+  template:
+    metadata:
+      labels:
+        app: zbook-backend
+    spec:
+      containers:
+      - name: zbook-backend
+        image: {{ .Values.backend.image }}
+        imagePullPolicy: {{ .Values.backend.imagePullPolicy }}
+        envFrom:
+          - configMapRef:
+              name: zbook-backend-config
+        command: ["/app/wait-for.sh", "zbook-minio-api-service:9000", "--", "/app/wait-for.sh", "zbook-database-service:5432", "--", "/app/start.sh"]
+        args: ["/app/main"]
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "{{ .Values.backend.resources.requests.memory }}"
+            cpu: "{{ .Values.backend.resources.requests.cpu }}"
+          limits:
+            memory: "{{ .Values.backend.resources.limits.memory }}"
+            cpu: "{{ .Values.backend.resources.limits.cpu }}"

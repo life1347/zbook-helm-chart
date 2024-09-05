@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  zbook-frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: zbook-frontend
+  template:
+    metadata:
+      labels:
+        app: zbook-frontend
+    spec:
+      containers:
+      - name: zbook-frontend
+        image: {{ .Values.frontend.image }}
+        imagePullPolicy: {{ .Values.frontend.imagePullPolicy }}
+        envFrom:
+          - configMapRef:
+              name: zbook-frontend-config
+        ports:
+        - containerPort: 3000

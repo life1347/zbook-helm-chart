@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zbook-database-config
+  labels:
+    app: zbook-database
+data:
+  POSTGRES_DB: {{ .Values.database.env.POSTGRES_DB | quote }}
+  POSTGRES_USER: {{ .Values.database.env.POSTGRES_USER | quote }}
+  POSTGRES_PASSWORD: {{ .Values.database.env.POSTGRES_PASSWORD | quote }}

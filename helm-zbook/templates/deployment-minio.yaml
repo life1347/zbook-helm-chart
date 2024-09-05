@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zbook-minio
+spec:
+  replicas: {{ .Values.minio.replicaCount }}
+  selector:
+    matchLabels:
+      app: zbook-minio
+  template:
+    metadata:
+      labels:
+        app: zbook-minio
+    spec:
+      containers:
+      - name: zbook-minio
+        image: {{ .Values.minio.image }}
+        imagePullPolicy: IfNotPresent
+        args:
+          - server
+          - /data
+          - --console-address
+          - ":9001"
+        envFrom:
+          - configMapRef:
+              name: zbook-minio-config
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001 # webui
+        volumeMounts:
+        - name: minio-storage
+          mountPath: /data
+      volumes:
+      - name: minio-storage
+        persistentVolumeClaim:
+          claimName: zbook-minio-pv-claim
