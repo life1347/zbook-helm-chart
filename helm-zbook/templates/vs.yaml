@@ -55,22 +55,3 @@ spec:
         host: zbook-minio-webui-service
         port:
           number: 9001
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: zbook-api-virtual-service
-spec:
-  hosts:
-  - {{ printf "api.%s" .Values.common.website }}
-  gateways:
-  - {{ .Values.common.gateway }}
-  http:
-  - match:
-    - uri:
-        prefix: "/"
-    route:
-    - destination:
-        host: zbook-backend-api-service
-        port:
-          number: 8080
